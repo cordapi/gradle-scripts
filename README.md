@@ -1,12 +1,6 @@
 # Gradle Scripts
 
-This is a collection of gradle scripts that I use in other projects.
-
-Other projects can apply these scripts like this. See:
-
- * https://github.com/tomasbjerre/violations-lib
- * https://github.com/tomasbjerre/git-changelog-lib
- * https://github.com/tomasbjerre/violation-comments-to-github-gradle-plugin
+This is a collection of gradle scripts used in other cordapi projects.
 
 Applying them via a Maven repository means:
 
@@ -26,10 +20,11 @@ buildscript {
   maven { url "https://jitpack.io" }
  }
  dependencies {
-  classpath 'com.github.tomasbjerre:gradle-scripts:master-SNAPSHOT'
+  classpath 'com.github.cordapi:gradle-scripts:master-SNAPSHOT'
  }
 }
 apply from: project.buildscript.classLoader.getResource('java.gradle').toURI()
+apply from: project.buildscript.classLoader.getResource('kotlin.gradle').toURI()
 apply from: project.buildscript.classLoader.getResource('changelog.gradle').toURI()
 apply from: project.buildscript.classLoader.getResource('release.gradle').toURI()
 apply from: project.buildscript.classLoader.getResource('gradle-plugin.gradle').toURI()
@@ -40,3 +35,7 @@ Jitpack can be slow but you can increase the timeouts like this:
 ./gradlew build -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 ```
 
+## Credits
+
+This project is a fork of [gradle-scripts](https://github.com/tomasbjerre/gradle-scripts), 
+a repo kindly shared by [Tomas Bjerre](https://github.com/tomasbjerre) to make others smile.

@@ -5,29 +5,27 @@
  *
  * And relocate any libraries like this:
  *
- *  shadowJar {
- *   relocate 'com.google', 'se.bjurr.com.google'
- *  }
- *
+ *  shadowJar {*   relocate 'com.google', 'se.bjurr.com.google'
+ *}*
  */
 project.ext.useShadowJar = project.hasProperty('useShadowJar') && project.useShadowJar
 
 ext.safeJavaIdentidier = { input ->
- input.replaceAll('[^a-zA-Z\\.]','')
+	input.replaceAll('[^a-zA-Z\\.]', '')
 }
 
 buildscript {
- repositories {
-  jcenter()
-  maven {
-   url 'https://plugins.gradle.org/m2/'
-  }
- }
- dependencies {
-  classpath 'net.researchgate:gradle-release:2.6.0'
-  classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-  classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
- }
+	repositories {
+		jcenter()
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+	dependencies {
+		classpath 'net.researchgate:gradle-release:2.6.0'
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+	}
 }
 
 apply plugin: net.researchgate.release.ReleasePlugin
@@ -38,119 +36,118 @@ apply plugin: com.github.jengelman.gradle.plugins.shadow.PluginShadowPlugin
 ext.set('release.useAutomaticVersion', 'true')
 
 task sourcesJar(type: Jar, dependsOn: classes) {
- classifier = 'sources'
- from sourceSets.main.allSource
+	classifier = 'sources'
+	from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
- classifier = 'javadoc'
- from javadoc.destinationDir
+	classifier = 'javadoc'
+	from javadoc.destinationDir
 }
 
 def artifactsList = []
 if (project.useShadowJar) {
- shadowJar {
-  baseName = project.name
-  classifier = null
-  version = project.version
- }
- artifactsList = [sourcesJar, javadocJar, shadowJar]
- build.dependsOn shadowJar
+	shadowJar {
+		baseName = project.name
+		classifier = null
+		version = project.version
+	}
+	artifactsList = [sourcesJar, javadocJar, shadowJar]
+	build.dependsOn shadowJar
 } else {
- logger.info("Not including shadow jar. To do that, add to your build.gradle: project.ext.useShadowJar = true")
- artifactsList = [sourcesJar, javadocJar, jar]
+	logger.info("Not including shadow jar. To do that, add to your build.gradle: project.ext.useShadowJar = true")
+	artifactsList = [sourcesJar, javadocJar, jar]
 }
 
 artifacts {
- archives artifactsList
+	archives artifactsList
 }
 
 
 def pomConfig = {
- scm {
-  url 'https://github.com/tomasbjerre/'+project.name
-  connection 'scm:https://tomasbjerre@github.com/tomasbjerre/'+project.name+'.git'
-  developerConnection 'scm:git://github.com/tomasbjerre/'+project.name+'.git'
- }
+	scm {
+		url 'https://github.com/cordapi/' + project.name
+		connection 'scm:https://cordapi@github.com/cordapi/' + project.name + '.git'
+		developerConnection 'scm:git://github.com/cordapi/' + project.name + '.git'
+	}
 
- licenses {
-  license {
-   name 'The Apache Software License, Version 2.0'
-   url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-   distribution 'repo'
-  }
- }
+	licenses {
+		license {
+			name 'The Apache Software License, Version 2.0'
+			url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+			distribution 'repo'
+		}
+	}
 
- developers {
-  developer {
-   id 'tomasbjerre'
-   name 'Tomas Bjerre'
-   email 'tomas.bjerre85@gmail.com'
-  }
- }
+	developers {
+		developer {
+			id 'cordapi'
+			name 'Tomas Bjerre'
+			email 'tomas.bjerre85@gmail.com'
+		}
+	}
 }
 
 publishing {
- publications {
-  MyPublication(MavenPublication) { publication ->
-   if (project.useShadowJar) {
-    project.shadow.component(publication)
-   } else {
-    from project.components.java
-   }
-   setArtifacts artifactsList
-   groupId project.group
-   artifactId project.name
-   version version
-   pom.withXml {
-    def root = asNode()
-    root.appendNode('description', project.description)
-    root.appendNode('name', project.name)
-    root.appendNode('url', 'https://github.com/tomasbjerre/'+project.name)
-    root.appendNode('inceptionYear', '2015')
-    root.children().last() + pomConfig
-   }
-  }
- }
+	publications {
+		MyPublication(MavenPublication) { publication ->
+			if (project.useShadowJar) {
+				project.shadow.component(publication)
+			} else {
+				from project.components.java
+			}
+			setArtifacts artifactsList
+			groupId project.group
+			artifactId project.name
+			version version
+			pom.withXml {
+				def root = asNode()
+				root.appendNode('description', project.description)
+				root.appendNode('name', project.name)
+				root.appendNode('url', 'https://github.com/cordapi/' + project.name)
+				root.appendNode('inceptionYear', '2015')
+				root.children().last() + pomConfig
+			}
+		}
+	}
 }
-
 
 //if (!System.getenv('BINTRAY_KEY') || System.getenv('BINTRAY_KEY').allWhitespace) {
 // throw new Exception("Saknar bintray user/key")
 //}
 bintray {
- user = System.getenv('BINTRAY_USER')
- key = System.getenv('BINTRAY_KEY')
- publications = ['MyPublication']
- publish = true
- pkg {
-  repo = 'tomasbjerre'
-  name = project.group+':'+project.name
-  desc = project.description
-  licenses = ['Apache-2.0']
-  vcsUrl = 'git@github.com:tomasbjerre/'+project.name+'.git'
-  websiteUrl = 'https://github.com/tomasbjerre/'+project.name
-  issueTrackerUrl = 'https://github.com/tomasbjerre/'+project.name+'/issues'
-  labels = project.tags
-  publicDownloadNumbers = true
-  githubRepo = 'tomasbjerre/' + project.name
-  githubReleaseNotesFile = 'README.md'
-  version {
-   name = project.version
-   released  = new Date()
-   vcsTag = project.version
-   gpg {
-    sign = true
-   }
-   mavenCentralSync {
-    sync = true
-    user = System.getenv('MAVEN_CENTRAL_USER')
-    password = System.getenv('MAVEN_CENTRAL_PASSWORD')
-   }
-  }
- }
+	user = System.getenv('BINTRAY_USER')
+	key = System.getenv('BINTRAY_KEY')
+	publications = ['MyPublication']
+	publish = true
+	pkg {
+		repo = 'cordapi'
+		name = project.group + ':' + project.name
+		desc = project.description
+		licenses = ['Apache-2.0']
+		vcsUrl = 'git@github.com:cordapi/' + project.name + '.git'
+		websiteUrl = 'https://github.com/cordapi/' + project.name
+		issueTrackerUrl = 'https://github.com/cordapi/' + project.name + '/issues'
+		labels = project.tags
+		publicDownloadNumbers = true
+		githubRepo = 'cordapi/' + project.name
+		githubReleaseNotesFile = 'README.md'
+		version {
+			name = project.version
+			released = new Date()
+			vcsTag = project.version
+			gpg {
+				sign = true
+			}
+			mavenCentralSync {
+				sync = true
+				user = System.getenv('MAVEN_CENTRAL_USER')
+				password = System.getenv('MAVEN_CENTRAL_PASSWORD')
+			}
+		}
+	}
 }
 
 afterReleaseBuild.dependsOn {
- [bintrayUpload]
+	[bintrayUpload]
 }

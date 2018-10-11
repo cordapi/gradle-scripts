@@ -1,21 +1,21 @@
 buildscript {
- repositories {
-  maven {
-   url "https://plugins.gradle.org/m2/"
-  }
- }
- dependencies {
-  classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.+"
- }
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.+"
+	}
 }
 
 task gitChangelogTask(type: se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask) {
- gitHubApi = "https://api.github.com/repos/tomasbjerre/"+project.name;
- gitHubToken = System.properties['GITHUB_OAUTH2TOKEN'];
- jiraIssuePattern = "\\bJENKINS-([0-9]+)\\b";
- removeIssueFromMessage = true
- file = new File("CHANGELOG.md");
- templateContent = """
+	gitHubApi = "https://api.github.com/repos/cordapi/" + project.name;
+	gitHubToken = System.properties['GITHUB_OAUTH2TOKEN'];
+	jiraIssuePattern = "\\bJENKINS-([0-9]+)\\b";
+	removeIssueFromMessage = true
+	file = new File("CHANGELOG.md");
+	templateContent = """
  # ${projectDisplayName} changelog
 
 Changelog of ${projectDisplayName}.

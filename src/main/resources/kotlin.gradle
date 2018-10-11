@@ -1,0 +1,61 @@
+buildscript {
+	ext {
+		kotlin_version = '1.2.61'
+		kotlinx_coroutines_version = '0.26.0'
+	}
+
+	repositories {
+		maven { url "https://plugins.gradle.org/m2/" }
+		maven { url 'https://dl.bintray.com/kotlin/exposed' }
+		maven { url 'https://jitpack.io' }
+	}
+	dependencies {
+		// kotlin plugins
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+		classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+		classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+	}
+}
+
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt' //optional
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+ext.projectDisplayName = (project.name.substring(0, 1).toUpperCase() + project.name.substring(1)).replaceAll('-', ' ')
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+	kotlinOptions {
+		languageVersion = "1.1"
+		apiVersion = "1.1"
+		freeCompilerArgs = ["-Xjsr305=strict"]
+		jvmTarget = "1.8"
+		javaParameters = true   // Useful for reflection.
+	}
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+	maven { url 'https://dl.bintray.com/kotlin/exposed' }
+	maven { url 'https://jitpack.io' }
+}
+
+
+
+sourceSets {
+	main.kotlin.srcDirs = ['src/main/kotlin']
+	test.kotlin.srcDirs = ['src/test/kotlin']
+}
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // Required for Kotlin integration
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+}

@@ -1,0 +1,45 @@
+buildscript {
+	ext {
+		corda_release_group = 'net.corda'
+		corda_release_version = '3.2-corda'
+		corda_gradle_plugins_version = '3.1.0'
+
+		quasar_version = '0.7.9'
+		capsule_version = '1.0.1'
+	}
+
+	repositories {
+		maven { url "https://plugins.gradle.org/m2/" }
+		maven { url 'https://dl.bintray.com/kotlin/exposed' }
+		maven { url 'https://jitpack.io' }
+	}
+	dependencies {
+		classpath 'com.github.cordapi:gradle-scripts:master-SNAPSHOT'
+	}
+}
+
+ext.projectDisplayName = (project.name.substring(0, 1).toUpperCase() + project.name.substring(1)).replaceAll('-', ' ')
+
+apply plugin: 'net.corda.plugins.quasar-utils'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+	maven { url 'https://dl.bintray.com/kotlin/exposed' }
+	maven { url 'https://jitpack.io' }
+}
+
+
+sourceSets {
+	main.kotlin.srcDirs = ['src/main/kotlin']
+	test.kotlin.srcDirs = ['src/test/kotlin']
+}
+
+dependencies {
+	compile "$corda_release_group:corda-core:$corda_release_version"
+	compile "$corda_release_group:corda-confidential-identities:$corda_release_version"
+
+	testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
+	testCompile "$corda_release_group:corda-test-utils:$corda_release_version"
+}

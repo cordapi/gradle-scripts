@@ -1,0 +1,61 @@
+buildscript {
+	ext {
+		spring_boot_version = '2.0.4.RELEASE'
+		spring_version = '5.0.8.RELEASE'
+		jackson_version = "2.9.2"
+		dependency_managemen_version ="1.0.6.RELEASE"
+	}
+
+	repositories {
+		maven { url "https://plugins.gradle.org/m2/" }
+		maven { url 'https://dl.bintray.com/kotlin/exposed' }
+		maven { url 'https://jitpack.io' }
+	}
+	dependencies {
+		// spring plugins
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+		classpath "io.spring.gradle:dependency-management-plugin:$dependency_managemen_version"
+	}
+}
+
+
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: "io.spring.dependency-management"
+
+apply plugin: 'kotlin-spring'
+//apply plugin: 'kotlin-allopen'
+//apply plugin: "kotlin-noarg"
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+ext.projectDisplayName = (project.name.substring(0, 1).toUpperCase() + project.name.substring(1)).replaceAll('-', ' ')
+
+dependencyManagement {
+	imports {
+		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+	}
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+	maven { url 'https://dl.bintray.com/kotlin/exposed' }
+	maven { url 'https://jitpack.io' }
+}
+
+
+dependencies {
+
+	compile "org.springframework.boot:spring-boot-starter"
+	compile "org.springframework.boot:spring-boot-starter-web"
+
+	// swagger via springfox
+	compile "io.springfox:springfox-swagger2:2.9.2"
+	compile "io.springfox:springfox-swagger-ui:2.9.2"
+
+}
